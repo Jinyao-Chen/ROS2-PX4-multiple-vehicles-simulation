@@ -32,7 +32,22 @@ sudo apt-get update
 ```
 sudo apt-get install gz-garden
 ```
-
+before starting to make in gazebo,install the Qgroundcontrol and open it to wait the connection with px4.
 ```
 make px4_sitl gz_x500
 ```
+
+```
+wget https://raw.githubusercontent.com/PX4/PX4-gazebo-models/main/simulation-gazebo
+```
+
+```
+python3 simulation-gazebo
+```
+
+
+
+```
+PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 1
+```
+
