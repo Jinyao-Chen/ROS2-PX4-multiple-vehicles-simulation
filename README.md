@@ -236,10 +236,32 @@ ros2 run 子工作空间名称 可执行文件名称
 
 补充2：在编写c++/python代码进行offboard模式控制时，需要注意坐标系的变换。在PX4中，坐标系为NED坐标系，即North-East-Down，因此x坐标指向北，y坐标指向东，z坐标指向下（所有的高度为负值）；而在Gazebo Ignition中，坐标系为END坐标系，此时x坐标指向东，y坐标指向北，z坐标指向上（高度为正值）。整理控制逻辑时需要注意坐标的换算。
 
-
-
-    
-
 至此，ROS2+PX4在Offboard模式下进行单机仿真的基本流程就全部介绍完了。大家如果成功地跑通以上流程，接下来就可以基于此进行更多的单机仿真开发了。
 
 【多机（编队）的开发流程】
+在前面的部分，我们完成了基于ROS2+PX4的单机仿真环境开发。现在我们开始进行多机的环境开发，为后续编队的控制逻辑仿真进行预先准备。现在我们先回顾一下我们启动单机仿真一个最主要的指令：
+```
+cd ~/PX4-Autopilot
+make px4_sitl gz_x500
+```
+这个make指令其实一共完成了三件事G：1-编译PX4源代码 2-启动PX4 3-启动Gazebo仿真，但在多机仿真中，我们不需要反复的使用make指令，这样会导致每一架x500无人机单独启动了一个Gazebo仿真，而这不是我们想要的。因此在Gazebo环境中启动多机仿真，我们的目标为以下几个：1-单独启动Gazebo仿真 2-分别启动PX4，添加无人机进入Gazebo环境 3-建立通信
+现在我们尝试单独启动一下Gazebo仿真，首先我们需要下载一个Gazebo的启动脚本(simulation-gazebo)：
+```
+wget https://raw.githubusercontent.com/PX4/PX4-gazebo-models/main/simulation-gazebo
+```
+随后在脚本所在的目录终端运行以下指令：
+```
+python3 simulation-gazebo
+```
+首次运行脚本后，会下载一些组建放在.simulation-gazebo下（在主目录里用Ctrl+H打开隐藏文件夹），其中的/worlds/default.sdf即为仿真的世界sdf文件，后续在这个文件里进行修改。
+
+在单独启动了Gazebo环境后，我们往其中添加无人机，此时我们不再使用make命令，而是用以下指令：
+```
+PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 1
+```
+其中有四个参数，PX4_GZ_STANDALONE=1表明我们使用standalone启动（不启动仿真，只启动PX4，等待单独启动的仿真，当我们前面已经单独启动了Gazebo环境之后，会自动在仿真环境中添加飞机），PX4_SYS_AUTOSTART=4001为必须字段，PX4_GZ_MODEL_POSE="0,1"表示无人机的位置，注意不同的飞机位置应该不一样，PX4_SIM_MODEL=gz_x500指定了我们的飞机模型为x500，运行该指令后，我们应该可以在我们之前单独打开的Gazebo里看见出现了一架飞机。
+
+现在我们再添加第二架飞机：
+```
+PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 1
+```
