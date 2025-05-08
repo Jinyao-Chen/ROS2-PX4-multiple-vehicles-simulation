@@ -257,11 +257,20 @@ python3 simulation-gazebo
 
 在单独启动了Gazebo环境后，我们往其中添加无人机，此时我们不再使用make命令，而是用以下指令：
 ```
-PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 1
+cd ~/PX4-Autopilot
+PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,2" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 0
 ```
-其中有四个参数，PX4_GZ_STANDALONE=1表明我们使用standalone启动（不启动仿真，只启动PX4，等待单独启动的仿真，当我们前面已经单独启动了Gazebo环境之后，会自动在仿真环境中添加飞机），PX4_SYS_AUTOSTART=4001为必须字段，PX4_GZ_MODEL_POSE="0,1"表示无人机的位置，注意不同的飞机位置应该不一样，PX4_SIM_MODEL=gz_x500指定了我们的飞机模型为x500，运行该指令后，我们应该可以在我们之前单独打开的Gazebo里看见出现了一架飞机。
+其中有四个参数，PX4_GZ_STANDALONE=1表明我们使用standalone启动（不启动仿真，只启动PX4，等待单独启动的仿真，当我们前面已经单独启动了Gazebo环境之后，会自动在仿真环境中添加飞机），PX4_SYS_AUTOSTART=4001为必须字段，PX4_GZ_MODEL_POSE="0,2"表示无人机的位置，注意不同的飞机位置应该不一样，PX4_SIM_MODEL=gz_x500指定了我们的飞机模型为x500，同时，我们需要为多机仿真的每一架无人机给定一个单独的编号，这里为 -i 0，即第0号无人机。运行该指令后，我们应该可以在我们之前单独打开的Gazebo里看见出现了一架飞机。
 
 现在我们再添加第二架飞机：
 ```
 PX4_GZ_STANDALONE=1 PX4_SYS_AUTOSTART=4001 PX4_GZ_MODEL_POSE="0,1" PX4_SIM_MODEL=gz_x500 ./build/px4_sitl_default/bin/px4 -i 1
+```
+现在我们会发现在Gazebo里出现了两架并排的无人机，可以分别在他们启动PX4后的终端输入：
+```
+commander takeoff/land
+```
+可以分别观察他们的起降情况。最后添加通信：
+```
+MicroXRCEAgent udp4 -p 8888
 ```
