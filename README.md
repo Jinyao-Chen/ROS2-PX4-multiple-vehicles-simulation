@@ -2,7 +2,7 @@
 
 ##Chinese tutorial
 the chinese tutorial:(in ZhiHu app)
-[Video Tutorial](https://zhuanlan.zhihu.com/p/1904187016243045984)
+[Blog Reference](https://zhuanlan.zhihu.com/p/1904187016243045984)
 
 ## Introduction
 
